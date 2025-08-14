@@ -1,6 +1,3 @@
-/* styles.css */
-
-/* ===== THEME COLORS ===== */
 :root {
     --alarm-bg: linear-gradient(135deg, #ff9a9e, #fad0c4);
     --stopwatch-bg: linear-gradient(135deg, #a1c4fd, #c2e9fb);
@@ -12,7 +9,6 @@
     --shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
-/* ===== GLOBAL STYLES ===== */
 body {
     font-family: 'Segoe UI', Tahoma, sans-serif;
     margin: 0;
@@ -32,10 +28,6 @@ header, footer {
     z-index: 2;
 }
 
-h1, h2 {
-    margin: 10px 0;
-}
-
 main {
     flex: 1;
     display: flex;
@@ -51,35 +43,12 @@ main {
     border-radius: 16px;
     background: var(--card-bg);
     box-shadow: var(--shadow);
-    opacity: 0;
-    transform: translateY(10px);
-    transition: opacity 0.4s ease, transform 0.4s ease;
 }
 
-.feature.visible {
-    opacity: 1;
-    transform: translateY(0);
+.hidden {
+    display: none !important;
 }
 
-.feature-header {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.5em;
-    margin-bottom: 10px;
-}
-
-.feature-icon {
-    margin-right: 8px;
-}
-
-.instructions {
-    font-size: 0.9em;
-    opacity: 0.8;
-    margin-top: 10px;
-}
-
-/* ===== CONTROLS ===== */
 button, input {
     padding: 10px 15px;
     font-size: 1.1em;
@@ -90,90 +59,13 @@ button, input {
     color: white;
     cursor: pointer;
     box-shadow: var(--shadow);
-    transition: background 0.3s ease;
 }
 
 button:hover {
     background: #e0306a;
 }
 
-input[type="number"], input[type="time"] {
-    background: #fff;
-    color: var(--text-color);
-}
-
-/* ===== STOPWATCH LAPS ===== */
-#stopwatch-laps {
-    list-style: none;
-    padding: 0;
-    margin-top: 15px;
-    text-align: left;
-    max-height: 150px;
-    overflow-y: auto;
-}
-
-#stopwatch-laps li {
-    background: #f4f4f4;
-    margin-bottom: 5px;
-    padding: 5px 10px;
-    border-radius: 6px;
-    font-size: 0.95em;
-}
-
-/* ===== TIMER CIRCLE ===== */
-.timer-visual {
-    position: relative;
-    display: inline-block;
-    margin-top: 15px;
-}
-
-#timer-display {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 1.5em;
-    font-weight: bold;
-}
-
-/* ===== WEATHER ===== */
-#weather-data {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-#weather-icon {
-    width: 80px;
-    height: 80px;
-}
-
-/* ===== BACKGROUND PER MODE ===== */
-body.mode-alarm {
-    background: var(--alarm-bg);
-}
-
-body.mode-stopwatch {
-    background: var(--stopwatch-bg);
-}
-
-body.mode-timer {
-    background: var(--timer-bg);
-}
-
-body.mode-weather {
-    background: var(--weather-bg);
-}
-
-/* ===== RESPONSIVENESS ===== */
-@media (min-width: 600px) {
-    .feature {
-        padding: 30px;
-    }
-    button, input {
-        font-size: 1.2em;
-    }
-    #timer-display {
-        font-size: 2em;
-    }
-}
+body.mode-alarm { background: var(--alarm-bg); }
+body.mode-stopwatch { background: var(--stopwatch-bg); }
+body.mode-timer { background: var(--timer-bg); }
+body.mode-weather { background: var(--weather-bg); }
