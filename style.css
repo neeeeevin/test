@@ -1,0 +1,25 @@
+/* styles.css */
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    padding: 20px;
+}
+
+h1 {
+    margin-bottom: 20px;
+}
+
+.feature {
+    display: none;
+    margin-top: 20px;
+}
+
+.feature.visible {
+    display: block;
+}
+
+input, button {
+    margin: 5px;
+    padding: 5px 10px;
+    font-size: 1em;
+}
