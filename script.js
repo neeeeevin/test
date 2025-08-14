@@ -1,237 +1,160 @@
-// script.js
+// ----------------------
+// Feature Switching Logic
+// ----------------------
 
-/* ===============================
-   DOM ELEMENTS
-================================= */
-const alarmClockEl = document.getElementById('alarm-clock');
-const stopwatchEl = document.getElementById('stopwatch');
-const timerEl = document.getElementById('timer');
-const weatherEl = document.getElementById('weather');
-
-// Alarm
-const clockTimeEl = document.getElementById('clock-time');
-const alarmTimeInput = document.getElementById('alarm-time');
-const setAlarmBtn = document.getElementById('set-alarm');
-
-// Stopwatch
-const stopwatchTimeEl = document.getElementById('stopwatch-time');
-const startStopwatchBtn = document.getElementById('start-stopwatch');
-const stopStopwatchBtn = document.getElementById('stop-stopwatch');
-const resetStopwatchBtn = document.getElementById('reset-stopwatch');
-const lapStopwatchBtn = document.getElementById('lap-stopwatch');
-const lapsListEl = document.getElementById('stopwatch-laps');
-
-// Timer
-const timerInputEl = document.getElementById('timer-input');
-const startTimerBtn = document.getElementById('start-timer');
-const timerDisplayEl = document.getElementById('timer-display');
-const timerProgressCircle = document.getElementById('timer-progress');
-
-// Weather
-const weatherInfoEl = document.getElementById('weather-info');
-const weatherIconEl = document.getElementById('weather-icon');
-
-/* ===============================
-   STATE VARIABLES
-================================= */
-let alarmTime = null;
-let alarmSet = false;
-
-let stopwatchInterval = null;
-let stopwatchTime = 0;
-let lapCount = 0;
-
-let timerInterval = null;
-let timerRemaining = 0;
-let timerTotal = 0;
-
-// Debounce
-let orientationTimeout = null;
-const ORIENTATION_DEBOUNCE_MS = 300;
-
-/* ===============================
-   UTILITY FUNCTIONS
-================================= */
-function showFeature(feature, modeClass) {
-    [alarmClockEl, stopwatchEl, timerEl, weatherEl].forEach(el => {
-        el.classList.remove('visible');
-    });
-    feature.classList.add('visible');
-    document.body.className = modeClass;
+function showFeature(id) {
+    document.querySelectorAll(".feature").forEach(f => f.classList.add("hidden"));
+    document.getElementById(id).classList.remove("hidden");
 }
 
-/* ===============================
-   ALARM CLOCK
-================================= */
-function updateClock() {
-    const now = new Date();
-    clockTimeEl.textContent = now.toLocaleTimeString();
-    if (alarmSet && alarmTime === `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`) {
-        alert("⏰ Alarm ringing!");
-        alarmSet = false;
-    }
-}
-setAlarmBtn.addEventListener('click', () => {
-    alarmTime = alarmTimeInput.value;
-    if (alarmTime) {
-        alarmSet = true;
-        alert(`Alarm set for ${alarmTime}`);
-    }
-});
-
-/* ===============================
-   STOPWATCH
-================================= */
-function updateStopwatch() {
-    const hrs = String(Math.floor(stopwatchTime / 3600)).padStart(2, '0');
-    const mins = String(Math.floor((stopwatchTime % 3600) / 60)).padStart(2, '0');
-    const secs = String(stopwatchTime % 60).padStart(2, '0');
-    stopwatchTimeEl.textContent = `${hrs}:${mins}:${secs}`;
-}
-startStopwatchBtn.addEventListener('click', () => {
-    if (!stopwatchInterval) {
-        stopwatchInterval = setInterval(() => {
-            stopwatchTime++;
-            updateStopwatch();
-        }, 1000);
-    }
-});
-stopStopwatchBtn.addEventListener('click', () => {
-    clearInterval(stopwatchInterval);
-    stopwatchInterval = null;
-});
-resetStopwatchBtn.addEventListener('click', () => {
-    stopwatchTime = 0;
-    lapCount = 0;
-    lapsListEl.innerHTML = '';
-    updateStopwatch();
-});
-lapStopwatchBtn.addEventListener('click', () => {
-    if (stopwatchInterval) {
-        lapCount++;
-        const li = document.createElement('li');
-        li.textContent = `Lap ${lapCount}: ${stopwatchTimeEl.textContent}`;
-        lapsListEl.appendChild(li);
-    }
-});
-
-/* ===============================
-   TIMER
-================================= */
-function updateTimerDisplay() {
-    timerDisplayEl.textContent = timerRemaining;
-    const circumference = 2 * Math.PI * 70;
-    const offset = circumference - (timerRemaining / timerTotal) * circumference;
-    timerProgressCircle.style.strokeDashoffset = offset;
-}
-startTimerBtn.addEventListener('click', () => {
-    const seconds = parseInt(timerInputEl.value, 10);
-    if (!isNaN(seconds) && seconds > 0) {
-        timerTotal = seconds;
-        timerRemaining = seconds;
-        updateTimerDisplay();
-        clearInterval(timerInterval);
-        timerInterval = setInterval(() => {
-            timerRemaining--;
-            updateTimerDisplay();
-            if (timerRemaining <= 0) {
-                clearInterval(timerInterval);
-                alert("⏳ Timer finished!");
-            }
-        }, 1000);
-    }
-});
-
-/* ===============================
-   WEATHER
-================================= */
-async function loadWeather(lat = null, lon = null) {
-    const apiKey = "YOUR_OPENWEATHERMAP_API_KEY";
-    let url;
-    if (lat && lon) {
-        url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`;
-    } else {
-        const defaultCity = "London";
-        url = `https://api.openweathermap.org/data/2.5/weather?q=${defaultCity}&appid=${apiKey}&units=metric`;
-    }
-    try {
-        const res = await fetch(url);
-        const data = await res.json();
-        if (data.weather && data.weather[0]) {
-            weatherInfoEl.textContent = `${data.name}: ${data.weather[0].description}, ${data.main.temp}°C`;
-            weatherIconEl.src = `https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`;
-        } else {
-            weatherInfoEl.textContent = "Weather data unavailable.";
-            weatherIconEl.src = "";
-        }
-    } catch {
-        weatherInfoEl.textContent = "Failed to load weather.";
-    }
-}
-function detectWeather() {
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-            pos => loadWeather(pos.coords.latitude, pos.coords.longitude),
-            () => loadWeather()
-        );
-    } else {
-        loadWeather();
-    }
-}
-
-/* ===============================
-   ORIENTATION DETECTION
-================================= */
-function setModeFromType(orientationType) {
-    if (orientationType.includes("portrait-primary")) {
-        showFeature(alarmClockEl, "mode-alarm");
-    } else if (orientationType.includes("landscape-primary")) {
-        showFeature(stopwatchEl, "mode-stopwatch");
-    } else if (orientationType.includes("portrait-secondary")) {
-        showFeature(timerEl, "mode-timer");
-    } else if (orientationType.includes("landscape-secondary")) {
-        detectWeather();
-        showFeature(weatherEl, "mode-weather");
-    }
-}
+// ----------------------
+// Orientation Detection
+// ----------------------
 
 function handleOrientationChange() {
-    if (orientationTimeout) clearTimeout(orientationTimeout);
-    orientationTimeout = setTimeout(() => {
-        if (screen.orientation && screen.orientation.type) {
-            setModeFromType(screen.orientation.type);
-        }
-    }, ORIENTATION_DEBOUNCE_MS);
+    if (screen.orientation && typeof screen.orientation.type === "string") {
+        console.log("✅ Using ScreenOrientation API:", screen.orientation.type);
+        setModeFromType(screen.orientation.type);
+    }
 }
 
 function handleDeviceOrientation(event) {
-    if (orientationTimeout) clearTimeout(orientationTimeout);
-    orientationTimeout = setTimeout(() => {
-        const beta = event.beta;   // front/back tilt (-180, 180)
-        const gamma = event.gamma; // left/right tilt (-90, 90)
+    const beta = event.beta;   // front/back tilt: 0 (upright) to ±180
+    const gamma = event.gamma; // left/right tilt: -90 to 90
 
-        if (beta > 45 && beta < 135) {
-            showFeature(alarmClockEl, "mode-alarm");
-        } else if (beta < -45 && beta > -135) {
-            showFeature(timerEl, "mode-timer");
-        } else if (Math.abs(beta) < 45 && gamma > 0) {
-            showFeature(stopwatchEl, "mode-stopwatch");
-        } else if (Math.abs(beta) < 45 && gamma < 0) {
-            detectWeather();
-            showFeature(weatherEl, "mode-weather");
-        }
-    }, ORIENTATION_DEBOUNCE_MS);
+    let mode = "";
+
+    // Portrait upright
+    if (Math.abs(beta) < 45 && Math.abs(gamma) < 30) {
+        mode = "portrait-primary";
+    }
+    // Portrait upside down
+    else if (Math.abs(Math.abs(beta) - 180) < 45 && Math.abs(gamma) < 30) {
+        mode = "portrait-secondary";
+    }
+    // Landscape right-side up
+    else if (Math.abs(gamma) > 45 && gamma > 0) {
+        mode = "landscape-primary";
+    }
+    // Landscape left-side up
+    else if (Math.abs(gamma) > 45 && gamma < 0) {
+        mode = "landscape-secondary";
+    }
+
+    if (mode) {
+        console.log("⚠️ Using DeviceOrientationEvent fallback:", mode, `(beta: ${beta}, gamma: ${gamma})`);
+        setModeFromType(mode);
+    }
 }
 
-/* ===============================
-   INIT
-================================= */
+function setModeFromType(type) {
+    if (type.includes("portrait-primary")) {
+        showFeature("alarm-clock");
+    } else if (type.includes("landscape-primary")) {
+        showFeature("stopwatch");
+    } else if (type.includes("portrait-secondary")) {
+        showFeature("timer");
+    } else if (type.includes("landscape-secondary")) {
+        showFeature("weather");
+    }
+}
+
+function initOrientationDetection() {
+    if (screen.orientation && typeof screen.orientation.addEventListener === "function") {
+        screen.orientation.addEventListener("change", handleOrientationChange);
+        handleOrientationChange(); // initial check
+    } else if ("DeviceOrientationEvent" in window) {
+        window.addEventListener("deviceorientation", handleDeviceOrientation);
+    } else {
+        console.warn("❌ Orientation detection not supported on this device.");
+    }
+}
+
+initOrientationDetection();
+
+// ----------------------
+// Alarm Clock
+// ----------------------
+
+function updateClock() {
+    const now = new Date();
+    document.getElementById("clock-time").textContent = now.toLocaleTimeString();
+}
 setInterval(updateClock, 1000);
 updateClock();
 
-if (screen.orientation && typeof screen.orientation.addEventListener === "function") {
-    screen.orientation.addEventListener("change", handleOrientationChange);
-    handleOrientationChange();
-} else if ("DeviceOrientationEvent" in window) {
-    window.addEventListener("deviceorientation", handleDeviceOrientation);
+// ----------------------
+// Stopwatch
+// ----------------------
+
+let stopwatchInterval;
+let stopwatchStartTime;
+let stopwatchElapsed = 0;
+
+function updateStopwatch() {
+    const elapsed = Date.now() - stopwatchStartTime + stopwatchElapsed;
+    const secs = Math.floor(elapsed / 1000) % 60;
+    const mins = Math.floor(elapsed / 60000) % 60;
+    const hrs = Math.floor(elapsed / 3600000);
+    document.getElementById("stopwatch-time").textContent =
+        `${String(hrs).padStart(2, '0')}:${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
 }
+
+document.getElementById("start-stopwatch").addEventListener("click", () => {
+    stopwatchStartTime = Date.now();
+    stopwatchInterval = setInterval(updateStopwatch, 1000);
+});
+
+document.getElementById("stop-stopwatch").addEventListener("click", () => {
+    clearInterval(stopwatchInterval);
+    stopwatchElapsed += Date.now() - stopwatchStartTime;
+});
+
+document.getElementById("reset-stopwatch").addEventListener("click", () => {
+    clearInterval(stopwatchInterval);
+    stopwatchElapsed = 0;
+    document.getElementById("stopwatch-time").textContent = "00:00:00";
+});
+
+// ----------------------
+// Timer
+// ----------------------
+
+let timerInterval;
+
+document.getElementById("start-timer").addEventListener("click", () => {
+    let timeLeft = parseInt(document.getElementById("timer-input").value, 10);
+    document.getElementById("timer-display").textContent = timeLeft;
+
+    clearInterval(timerInterval);
+    timerInterval = setInterval(() => {
+        timeLeft--;
+        document.getElementById("timer-display").textContent = timeLeft;
+        if (timeLeft <= 0) {
+            clearInterval(timerInterval);
+            alert("Time's up!");
+        }
+    }, 1000);
+});
+
+// ----------------------
+// Weather (default city hardcoded for now)
+// ----------------------
+
+const API_KEY = "YOUR_OPENWEATHERMAP_API_KEY";
+const CITY = "London";
+
+function fetchWeather() {
+    fetch(`https://api.openweathermap.org/data/2.5/weather?q=${CITY}&appid=${API_KEY}&units=metric`)
+        .then(response => response.json())
+        .then(data => {
+            const info = `${data.name}: ${data.main.temp}°C, ${data.weather[0].description}`;
+            document.getElementById("weather-info").textContent = info;
+        })
+        .catch(err => {
+            console.error(err);
+            document.getElementById("weather-info").textContent = "Error loading weather.";
+        });
+}
+
+fetchWeather();
