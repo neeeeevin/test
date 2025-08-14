@@ -8,37 +8,80 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1>Orientation-Based Web App</h1>
-    <div id="feature-container">
+    <header>
+        <h1 id="app-title">Orientation-Based Web App</h1>
+    </header>
+
+    <main id="feature-container">
         <!-- Alarm Clock -->
-        <div id="alarm-clock" class="feature hidden">
-            <h2>Alarm Clock</h2>
+        <section id="alarm-clock" class="feature hidden">
+            <div class="feature-header">
+                <span class="feature-icon">⏰</span>
+                <h2>Alarm Clock</h2>
+            </div>
             <p id="clock-time">--:--:--</p>
-        </div>
+            <div class="alarm-controls">
+                <label for="alarm-time">Set Alarm:</label>
+                <input type="time" id="alarm-time">
+                <button id="set-alarm">Set Alarm</button>
+            </div>
+            <p class="instructions">Rotate to portrait mode (upright) to see the alarm clock.</p>
+        </section>
 
         <!-- Stopwatch -->
-        <div id="stopwatch" class="feature hidden">
-            <h2>Stopwatch</h2>
+        <section id="stopwatch" class="feature hidden">
+            <div class="feature-header">
+                <span class="feature-icon">⏱️</span>
+                <h2>Stopwatch</h2>
+            </div>
             <p id="stopwatch-time">00:00:00</p>
-            <button id="start-stopwatch">Start</button>
-            <button id="stop-stopwatch">Stop</button>
-            <button id="reset-stopwatch">Reset</button>
-        </div>
+            <div class="stopwatch-controls">
+                <button id="start-stopwatch">Start</button>
+                <button id="stop-stopwatch">Stop</button>
+                <button id="reset-stopwatch">Reset</button>
+                <button id="lap-stopwatch">Lap</button>
+            </div>
+            <ul id="stopwatch-laps"></ul>
+            <p class="instructions">Rotate to landscape mode (right-side up) to use the stopwatch.</p>
+        </section>
 
         <!-- Timer -->
-        <div id="timer" class="feature hidden">
-            <h2>Timer</h2>
-            <input type="number" id="timer-input" placeholder="Seconds">
-            <button id="start-timer">Start</button>
-            <p id="timer-display">00</p>
-        </div>
+        <section id="timer" class="feature hidden">
+            <div class="feature-header">
+                <span class="feature-icon">⏳</span>
+                <h2>Timer</h2>
+            </div>
+            <div class="timer-controls">
+                <input type="number" id="timer-input" placeholder="Seconds">
+                <button id="start-timer">Start</button>
+            </div>
+            <div class="timer-visual">
+                <svg id="timer-circle" width="150" height="150">
+                    <circle cx="75" cy="75" r="70" stroke="#ccc" stroke-width="8" fill="none" />
+                    <circle id="timer-progress" cx="75" cy="75" r="70" stroke="var(--accent-color)" stroke-width="8" fill="none" stroke-linecap="round" stroke-dasharray="439.6" stroke-dashoffset="439.6"/>
+                </svg>
+                <p id="timer-display">00</p>
+            </div>
+            <p class="instructions">Rotate to portrait mode (upside down) to start a timer.</p>
+        </section>
 
         <!-- Weather -->
-        <div id="weather" class="feature hidden">
-            <h2>Weather</h2>
-            <p id="weather-info">Loading...</p>
-        </div>
-    </div>
+        <section id="weather" class="feature hidden">
+            <div class="feature-header">
+                <span class="feature-icon">🌤️</span>
+                <h2>Weather</h2>
+            </div>
+            <div id="weather-data">
+                <img id="weather-icon" alt="Weather icon" />
+                <p id="weather-info">Loading...</p>
+            </div>
+            <p class="instructions">Rotate to landscape mode (left-side up) to see the weather.</p>
+        </section>
+    </main>
+
+    <footer>
+        <p>Rotate your device to switch modes</p>
+    </footer>
 
     <script src="script.js"></script>
 </body>
