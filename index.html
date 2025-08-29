@@ -1,90 +1,864 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1, viewport-fit=cover"
-  />
-  <title>Orientation-Based Web App</title>
-  <link rel="stylesheet" href="styles.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#2196F3">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <title>Orientation Multi-Tool App</title>
+    
+    <link rel="manifest" href="#" id="manifest-link">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100vh;
+            overflow: hidden;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-touch-callout: none;
+        }
+
+        .app-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            transition: all 0.5s ease;
+        }
+
+        .orientation-indicator {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+            z-index: 1000;
+        }
+
+        .app-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .app-subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 30px;
+        }
+
+        .feature-content {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            min-height: 300px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Clock Styles */
+        .clock-display {
+            font-size: 4rem;
+            font-weight: 300;
+            font-family: 'Courier New', monospace;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
+        }
+
+        .clock-date {
+            font-size: 1.5rem;
+            margin-top: 10px;
+            opacity: 0.8;
+        }
+
+        /* Stopwatch Styles */
+        .stopwatch-display {
+            font-size: 3.5rem;
+            font-weight: 300;
+            font-family: 'Courier New', monospace;
+            margin-bottom: 30px;
+        }
+
+        .stopwatch-controls {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 100px;
+        }
+
+        .btn-start {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .btn-start:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+        }
+
+        .btn-stop {
+            background: #f44336;
+            color: white;
+        }
+
+        .btn-stop:hover {
+            background: #da190b;
+            transform: translateY(-2px);
+        }
+
+        .btn-reset {
+            background: #ff9800;
+            color: white;
+        }
+
+        .btn-reset:hover {
+            background: #e68900;
+            transform: translateY(-2px);
+        }
+
+        /* Timer Styles */
+        .timer-display {
+            font-size: 3.5rem;
+            font-weight: 300;
+            font-family: 'Courier New', monospace;
+            margin-bottom: 30px;
+        }
+
+        .timer-input {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            align-items: center;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .timer-input input {
+            width: 60px;
+            padding: 10px;
+            border: none;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 1.2rem;
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .timer-input span {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .timer-controls {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        /* Weather Styles */
+        .weather-display {
+            text-align: center;
+        }
+
+        .weather-location {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+        }
+
+        .weather-temp {
+            font-size: 4rem;
+            font-weight: 300;
+            margin-bottom: 10px;
+        }
+
+        .weather-desc {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            text-transform: capitalize;
+        }
+
+        .weather-details {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .weather-detail {
+            text-align: center;
+        }
+
+        .weather-detail-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-bottom: 5px;
+        }
+
+        .weather-detail-value {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .weather-error {
+            color: #ffcccb;
+            font-size: 1.1rem;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .loading {
+            font-size: 1.2rem;
+            opacity: 0.8;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .app-title {
+                font-size: 2rem;
+            }
+            
+            .clock-display {
+                font-size: 3rem;
+            }
+            
+            .stopwatch-display, .timer-display {
+                font-size: 2.5rem;
+            }
+            
+            .weather-temp {
+                font-size: 3rem;
+            }
+            
+            .feature-content {
+                margin: 10px;
+                padding: 20px;
+                min-height: 250px;
+            }
+        }
+
+        /* Orientation-specific backgrounds */
+        .portrait-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .landscape-primary {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .portrait-secondary {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        .landscape-secondary {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        }
+
+        /* Fullscreen styles */
+        .fullscreen-prompt {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            z-index: 1000;
+        }
+
+        /* Animation for transitions */
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .feature-content {
+            animation: slideIn 0.5s ease-out;
+        }
+    </style>
 </head>
-<body class="mode-alarm">
-  <header class="app-header">
-    <h1>Orientation-Based Web App</h1>
-    <p class="subtitle">Rotate your device to switch modes</p>
-  </header>
+<body>
+    <div class="orientation-indicator" id="orientationIndicator">
+        Loading...
+    </div>
+    
+    <div class="app-container" id="appContainer">
+        <div class="feature-content" id="featureContent">
+            <h1 class="app-title" id="appTitle">Orientation Multi-Tool</h1>
+            <p class="app-subtitle" id="appSubtitle">Rotate your device to access different features</p>
+            <div class="loading">Detecting orientation...</div>
+        </div>
+    </div>
 
-  <main id="feature-container">
-    <!-- Alarm (Portrait Upright) -->
-    <section id="alarm-clock" class="feature">
-      <div class="feature-header">
-        <span class="feature-icon">⏰</span>
-        <h2>Alarm Clock</h2>
-      </div>
-      <p id="clock-time" class="big-text">--:--:--</p>
-      <div class="row">
-        <label for="alarm-time">Set Alarm</label>
-        <input type="time" id="alarm-time" />
-        <button id="set-alarm">Set</button>
-      </div>
-      <p class="hint">Hold device upright (portrait) to view the Alarm.</p>
-    </section>
+    <div class="fullscreen-prompt" id="fullscreenPrompt" style="display: none;">
+        Tap to enter fullscreen for better experience
+    </div>
 
-    <!-- Stopwatch (Landscape Right-Side Up) -->
-    <section id="stopwatch" class="feature hidden">
-      <div class="feature-header">
-        <span class="feature-icon">⏱️</span>
-        <h2>Stopwatch</h2>
-      </div>
-      <p id="stopwatch-time" class="big-text mono">00:00:00</p>
-      <div class="row">
-        <button id="start-stopwatch">Start</button>
-        <button id="stop-stopwatch">Stop</button>
-        <button id="reset-stopwatch">Reset</button>
-      </div>
-      <p class="hint">Rotate to landscape (buttons on the right) for Stopwatch.</p>
-    </section>
+    <script>
+        class OrientationApp {
+            constructor() {
+                this.currentOrientation = '';
+                this.stopwatchTime = 0;
+                this.stopwatchInterval = null;
+                this.stopwatchRunning = false;
+                
+                this.timerTime = 0;
+                this.timerInterval = null;
+                this.timerRunning = false;
+                
+                this.weatherData = null;
+                this.weatherLoaded = false;
+                
+                this.init();
+            }
 
-    <!-- Timer (Portrait Upside Down) -->
-    <section id="timer" class="feature hidden">
-      <div class="feature-header">
-        <span class="feature-icon">⏳</span>
-        <h2>Timer</h2>
-      </div>
-      <div class="row">
-        <input type="number" id="timer-input" placeholder="Seconds" />
-        <button id="start-timer">Start</button>
-      </div>
-      <div class="timer-visual">
-        <svg id="timer-circle" width="160" height="160" viewBox="0 0 160 160" aria-hidden="true">
-          <circle cx="80" cy="80" r="70" class="track" />
-          <circle cx="80" cy="80" r="70" class="progress" />
-        </svg>
-        <p id="timer-display" class="big-text mono">0</p>
-      </div>
-      <p class="hint">Flip the phone upside‑down (portrait) to show Timer.</p>
-    </section>
+            init() {
+                this.setupOrientationDetection();
+                this.setupFullscreen();
+                this.detectInitialOrientation();
+                this.requestLocationForWeather();
+            }
 
-    <!-- Weather (Landscape Left-Side Up) -->
-    <section id="weather" class="feature hidden">
-      <div class="feature-header">
-        <span class="feature-icon">🌤️</span>
-        <h2>Weather</h2>
-      </div>
-      <div id="weather-data">
-        <img id="weather-icon" alt="Weather icon" />
-        <p id="weather-info">Loading...</p>
-      </div>
-      <p class="hint">Rotate to landscape (buttons on the left) for Weather.</p>
-    </section>
-  </main>
+            setupOrientationDetection() {
+                // Use screen.orientation API when available
+                if (screen.orientation) {
+                    screen.orientation.addEventListener('change', () => {
+                        this.handleOrientationChange();
+                    });
+                }
 
-  <footer class="app-footer">
-    <button id="enable-motion" class="hidden">Enable Motion</button>
-    <span id="debug" class="debug"></span>
-  </footer>
+                // Fallback to orientationchange event
+                window.addEventListener('orientationchange', () => {
+                    setTimeout(() => {
+                        this.handleOrientationChange();
+                    }, 100);
+                });
 
-  <script src="script.js"></script>
+                // Additional fallback using resize event
+                window.addEventListener('resize', () => {
+                    this.handleOrientationChange();
+                });
+
+                // Use DeviceOrientationEvent for more precise detection
+                if (window.DeviceOrientationEvent) {
+                    window.addEventListener('deviceorientation', (event) => {
+                        this.handleDeviceOrientation(event);
+                    });
+                }
+            }
+
+            detectInitialOrientation() {
+                setTimeout(() => {
+                    this.handleOrientationChange();
+                }, 500);
+            }
+
+            handleOrientationChange() {
+                let orientation = this.getOrientation();
+                
+                if (orientation !== this.currentOrientation) {
+                    this.currentOrientation = orientation;
+                    this.updateUI(orientation);
+                }
+            }
+
+            getOrientation() {
+                // Try to use screen.orientation API first
+                if (screen.orientation && screen.orientation.type) {
+                    return screen.orientation.type;
+                }
+
+                // Fallback to window.orientation with screen dimensions
+                const angle = window.orientation || 0;
+                const isPortrait = window.innerHeight > window.innerWidth;
+                
+                if (isPortrait) {
+                    return angle === 0 ? 'portrait-primary' : 'portrait-secondary';
+                } else {
+                    return angle === 90 ? 'landscape-primary' : 'landscape-secondary';
+                }
+            }
+
+            handleDeviceOrientation(event) {
+                // Use device orientation for more accurate upside-down detection
+                const { beta, gamma } = event;
+                
+                // Beta: front-back tilt (-180 to 180)
+                // Gamma: left-right tilt (-90 to 90)
+                
+                if (Math.abs(beta) > 150) {
+                    // Device is likely upside down
+                    if (window.innerHeight > window.innerWidth) {
+                        this.currentOrientation = 'portrait-secondary';
+                    } else {
+                        this.currentOrientation = 'landscape-secondary';
+                    }
+                    this.updateUI(this.currentOrientation);
+                }
+            }
+
+            updateUI(orientation) {
+                const indicator = document.getElementById('orientationIndicator');
+                const container = document.getElementById('appContainer');
+                const content = document.getElementById('featureContent');
+
+                indicator.textContent = orientation.replace('-', ' ').toUpperCase();
+                
+                // Remove all orientation classes
+                document.body.className = '';
+                document.body.classList.add(orientation);
+
+                // Update content based on orientation
+                this.loadFeatureForOrientation(orientation);
+            }
+
+            loadFeatureForOrientation(orientation) {
+                const content = document.getElementById('featureContent');
+                
+                switch (orientation) {
+                    case 'portrait-primary':
+                        this.loadAlarmClock(content);
+                        break;
+                    case 'landscape-primary':
+                        this.loadStopwatch(content);
+                        break;
+                    case 'portrait-secondary':
+                        this.loadTimer(content);
+                        break;
+                    case 'landscape-secondary':
+                        this.loadWeather(content);
+                        break;
+                    default:
+                        this.loadAlarmClock(content);
+                }
+            }
+
+            loadAlarmClock(content) {
+                content.innerHTML = `
+                    <h1 class="app-title">🕐 Alarm Clock</h1>
+                    <p class="app-subtitle">Portrait Mode (Upright)</p>
+                    <div class="clock-display" id="clockDisplay">00:00:00</div>
+                    <div class="clock-date" id="clockDate">Loading...</div>
+                `;
+                
+                this.startClock();
+            }
+
+            loadStopwatch(content) {
+                content.innerHTML = `
+                    <h1 class="app-title">⏱️ Stopwatch</h1>
+                    <p class="app-subtitle">Landscape Mode (Right-Side Up)</p>
+                    <div class="stopwatch-display" id="stopwatchDisplay">${this.formatTime(this.stopwatchTime)}</div>
+                    <div class="stopwatch-controls">
+                        <button class="btn btn-start" onclick="app.toggleStopwatch()">${this.stopwatchRunning ? 'Pause' : 'Start'}</button>
+                        <button class="btn btn-reset" onclick="app.resetStopwatch()">Reset</button>
+                    </div>
+                `;
+            }
+
+            loadTimer(content) {
+                content.innerHTML = `
+                    <h1 class="app-title">⏰ Timer</h1>
+                    <p class="app-subtitle">Portrait Mode (Upside Down)</p>
+                    <div class="timer-display" id="timerDisplay">${this.formatTime(this.timerTime)}</div>
+                    <div class="timer-input">
+                        <input type="number" id="timerMinutes" placeholder="0" min="0" max="59" value="5">
+                        <span>:</span>
+                        <input type="number" id="timerSeconds" placeholder="0" min="0" max="59" value="0">
+                    </div>
+                    <div class="timer-controls">
+                        <button class="btn btn-start" onclick="app.setTimer()">${this.timerRunning ? 'Pause' : 'Start'}</button>
+                        <button class="btn btn-reset" onclick="app.resetTimer()">Reset</button>
+                    </div>
+                `;
+            }
+
+            loadWeather(content) {
+                content.innerHTML = `
+                    <h1 class="app-title">🌤️ Weather</h1>
+                    <p class="app-subtitle">Landscape Mode (Left-Side Up)</p>
+                    <div class="weather-display" id="weatherDisplay">
+                        ${this.weatherLoaded ? this.renderWeather() : '<div class="loading">Loading weather data...</div>'}
+                    </div>
+                `;
+            }
+
+            startClock() {
+                const updateClock = () => {
+                    const now = new Date();
+                    const clockDisplay = document.getElementById('clockDisplay');
+                    const clockDate = document.getElementById('clockDate');
+                    
+                    if (clockDisplay) {
+                        clockDisplay.textContent = now.toLocaleTimeString();
+                    }
+                    
+                    if (clockDate) {
+                        clockDate.textContent = now.toLocaleDateString('en-US', {
+                            weekday: 'long',
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric'
+                        });
+                    }
+                };
+                
+                updateClock();
+                setInterval(updateClock, 1000);
+            }
+
+            toggleStopwatch() {
+                if (this.stopwatchRunning) {
+                    this.pauseStopwatch();
+                } else {
+                    this.startStopwatch();
+                }
+            }
+
+            startStopwatch() {
+                this.stopwatchRunning = true;
+                this.stopwatchInterval = setInterval(() => {
+                    this.stopwatchTime += 10;
+                    const display = document.getElementById('stopwatchDisplay');
+                    if (display) {
+                        display.textContent = this.formatTime(this.stopwatchTime);
+                    }
+                }, 10);
+                
+                // Update button text
+                const button = document.querySelector('.btn-start');
+                if (button) button.textContent = 'Pause';
+            }
+
+            pauseStopwatch() {
+                this.stopwatchRunning = false;
+                if (this.stopwatchInterval) {
+                    clearInterval(this.stopwatchInterval);
+                    this.stopwatchInterval = null;
+                }
+                
+                // Update button text
+                const button = document.querySelector('.btn-start');
+                if (button) button.textContent = 'Start';
+            }
+
+            resetStopwatch() {
+                this.pauseStopwatch();
+                this.stopwatchTime = 0;
+                const display = document.getElementById('stopwatchDisplay');
+                if (display) {
+                    display.textContent = this.formatTime(0);
+                }
+            }
+
+            setTimer() {
+                if (this.timerRunning) {
+                    this.pauseTimer();
+                    return;
+                }
+
+                const minutes = parseInt(document.getElementById('timerMinutes').value) || 0;
+                const seconds = parseInt(document.getElementById('timerSeconds').value) || 0;
+                
+                if (!this.timerTime) {
+                    this.timerTime = (minutes * 60 + seconds) * 1000;
+                }
+                
+                this.startTimer();
+            }
+
+            startTimer() {
+                if (this.timerTime <= 0) return;
+                
+                this.timerRunning = true;
+                this.timerInterval = setInterval(() => {
+                    this.timerTime -= 1000;
+                    const display = document.getElementById('timerDisplay');
+                    if (display) {
+                        display.textContent = this.formatTime(this.timerTime);
+                    }
+                    
+                    if (this.timerTime <= 0) {
+                        this.timerComplete();
+                    }
+                }, 1000);
+                
+                // Update button text
+                const button = document.querySelector('.btn-start');
+                if (button) button.textContent = 'Pause';
+            }
+
+            pauseTimer() {
+                this.timerRunning = false;
+                if (this.timerInterval) {
+                    clearInterval(this.timerInterval);
+                    this.timerInterval = null;
+                }
+                
+                // Update button text
+                const button = document.querySelector('.btn-start');
+                if (button) button.textContent = 'Start';
+            }
+
+            resetTimer() {
+                this.pauseTimer();
+                this.timerTime = 0;
+                const display = document.getElementById('timerDisplay');
+                if (display) {
+                    display.textContent = this.formatTime(0);
+                }
+            }
+
+            timerComplete() {
+                this.resetTimer();
+                this.showNotification('Timer Complete!', 'Your timer has finished.');
+                
+                // Try to vibrate if supported
+                if (navigator.vibrate) {
+                    navigator.vibrate([500, 200, 500, 200, 500]);
+                }
+            }
+
+            async requestLocationForWeather() {
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(
+                        (position) => {
+                            this.fetchWeather(position.coords.latitude, position.coords.longitude);
+                        },
+                        () => {
+                            // Fallback to IP-based location or default city
+                            this.fetchWeatherByCity('New York');
+                        }
+                    );
+                } else {
+                    this.fetchWeatherByCity('New York');
+                }
+            }
+
+            async fetchWeather(lat, lon) {
+                try {
+                    // Using Open-Meteo API (free, no API key required)
+                    const response = await fetch(
+                        `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,wind_speed_10m,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min&timezone=auto`
+                    );
+                    
+                    if (!response.ok) throw new Error('Weather fetch failed');
+                    
+                    const data = await response.json();
+                    this.processWeatherData(data);
+                } catch (error) {
+                    console.error('Weather fetch error:', error);
+                    this.weatherData = { error: 'Unable to fetch weather data' };
+                    this.weatherLoaded = true;
+                    this.updateWeatherDisplay();
+                }
+            }
+
+            async fetchWeatherByCity(city) {
+                try {
+                    // Get coordinates for the city first
+                    const geoResponse = await fetch(
+                        `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(city)}&count=1&language=en&format=json`
+                    );
+                    
+                    if (!geoResponse.ok) throw new Error('Geocoding failed');
+                    
+                    const geoData = await geoResponse.json();
+                    if (geoData.results && geoData.results.length > 0) {
+                        const location = geoData.results[0];
+                        this.fetchWeather(location.latitude, location.longitude);
+                    } else {
+                        throw new Error('City not found');
+                    }
+                } catch (error) {
+                    console.error('City weather fetch error:', error);
+                    this.weatherData = { error: 'Unable to fetch weather data' };
+                    this.weatherLoaded = true;
+                    this.updateWeatherDisplay();
+                }
+            }
+
+            processWeatherData(data) {
+                const weatherCodes = {
+                    0: '☀️ Clear sky',
+                    1: '🌤️ Mainly clear',
+                    2: '⛅ Partly cloudy',
+                    3: '☁️ Overcast',
+                    45: '🌫️ Foggy',
+                    48: '🌫️ Depositing rime fog',
+                    51: '🌦️ Light drizzle',
+                    53: '🌦️ Moderate drizzle',
+                    55: '🌧️ Dense drizzle',
+                    61: '🌦️ Slight rain',
+                    63: '🌧️ Moderate rain',
+                    65: '🌧️ Heavy rain',
+                    71: '❄️ Slight snow',
+                    73: '🌨️ Moderate snow',
+                    75: '❄️ Heavy snow',
+                    95: '⛈️ Thunderstorm'
+                };
+
+                this.weatherData = {
+                    temperature: Math.round(data.current.temperature_2m),
+                    unit: '°C',
+                    humidity: data.current.relative_humidity_2m,
+                    windSpeed: Math.round(data.current.wind_speed_10m * 10) / 10,
+                    description: weatherCodes[data.current.weather_code] || '🌤️ Unknown',
+                    location: 'Current Location'
+                };
+
+                this.weatherLoaded = true;
+                this.updateWeatherDisplay();
+            }
+
+            updateWeatherDisplay() {
+                const weatherDisplay = document.getElementById('weatherDisplay');
+                if (weatherDisplay && this.currentOrientation === 'landscape-secondary') {
+                    weatherDisplay.innerHTML = this.renderWeather();
+                }
+            }
+
+            renderWeather() {
+                if (this.weatherData.error) {
+                    return `<div class="weather-error">${this.weatherData.error}</div>`;
+                }
+
+                return `
+                    <div class="weather-location">${this.weatherData.location}</div>
+                    <div class="weather-temp">${this.weatherData.temperature}${this.weatherData.unit}</div>
+                    <div class="weather-desc">${this.weatherData.description}</div>
+                    <div class="weather-details">
+                        <div class="weather-detail">
+                            <div class="weather-detail-label">Humidity</div>
+                            <div class="weather-detail-value">${this.weatherData.humidity}%</div>
+                        </div>
+                        <div class="weather-detail">
+                            <div class="weather-detail-label">Wind Speed</div>
+                            <div class="weather-detail-value">${this.weatherData.windSpeed} km/h</div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            formatTime(milliseconds) {
+                const totalSeconds = Math.floor(milliseconds / 1000);
+                const minutes = Math.floor(totalSeconds / 60);
+                const seconds = totalSeconds % 60;
+                const ms = Math.floor((milliseconds % 1000) / 10);
+                
+                return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}.${ms.toString().padStart(2, '0')}`;
+            }
+
+            setupFullscreen() {
+                const prompt = document.getElementById('fullscreenPrompt');
+                
+                // Show fullscreen prompt on mobile
+                if (this.isMobile()) {
+                    setTimeout(() => {
+                        prompt.style.display = 'block';
+                        prompt.addEventListener('click', this.requestFullscreen.bind(this));
+                    }, 2000);
+                }
+
+                // Hide prompt when in fullscreen
+                document.addEventListener('fullscreenchange', () => {
+                    if (document.fullscreenElement) {
+                        prompt.style.display = 'none';
+                    }
+                });
+            }
+
+            requestFullscreen() {
+                const element = document.documentElement;
+                if (element.requestFullscreen) {
+                    element.requestFullscreen();
+                } else if (element.mozRequestFullScreen) {
+                    element.mozRequestFullScreen();
+                } else if (element.webkitRequestFullscreen) {
+                    element.webkitRequestFullscreen();
+                } else if (element.msRequestFullscreen) {
+                    element.msRequestFullscreen();
+                }
+            }
+
+            isMobile() {
+                return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            }
+
+            showNotification(title, body) {
+                if ('Notification' in window && Notification.permission === 'granted') {
+                    new Notification(title, { body });
+                } else if ('Notification' in window && Notification.permission !== 'denied') {
+                    Notification.requestPermission().then(permission => {
+                        if (permission === 'granted') {
+                            new Notification(title, { body });
+                        }
+                    });
+                }
+            }
+        }
+
+        // Initialize the app
+        const app = new OrientationApp();
+
+        // Request notification permission on load
+        if ('Notification' in window && Notification.permission === 'default') {
+            Notification.requestPermission();
+        }
+
+        // Prevent zooming
+        document.addEventListener('gesturestart', function (e) {
+            e.preventDefault();
+        });
+
+        document.addEventListener('gesturechange', function (e) {
+            e.preventDefault();
+        });
+
+        document.addEventListener('gestureend', function (e) {
+            e.preventDefault();
+        });
+    </script>
 </body>
 </html>
