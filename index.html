@@ -1,69 +1,90 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Orientation-Based Web App</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="utf-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, viewport-fit=cover"
+  />
+  <title>Orientation-Based Web App</title>
+  <link rel="stylesheet" href="styles.css" />
 </head>
-<body>
-    <header>
-        <h1 id="app-title">Orientation-Based Web App</h1>
-    </header>
+<body class="mode-alarm">
+  <header class="app-header">
+    <h1>Orientation-Based Web App</h1>
+    <p class="subtitle">Rotate your device to switch modes</p>
+  </header>
 
-    <main id="feature-container">
-        <!-- Alarm Clock -->
-        <section id="alarm-clock" class="feature hidden">
-            <div class="feature-header">
-                <span class="feature-icon">⏰</span>
-                <h2>Alarm Clock</h2>
-            </div>
-            <p id="clock-time">--:--:--</p>
-            <p class="instructions">Rotate to portrait upright to see the alarm clock.</p>
-        </section>
+  <main id="feature-container">
+    <!-- Alarm (Portrait Upright) -->
+    <section id="alarm-clock" class="feature">
+      <div class="feature-header">
+        <span class="feature-icon">⏰</span>
+        <h2>Alarm Clock</h2>
+      </div>
+      <p id="clock-time" class="big-text">--:--:--</p>
+      <div class="row">
+        <label for="alarm-time">Set Alarm</label>
+        <input type="time" id="alarm-time" />
+        <button id="set-alarm">Set</button>
+      </div>
+      <p class="hint">Hold device upright (portrait) to view the Alarm.</p>
+    </section>
 
-        <!-- Stopwatch -->
-        <section id="stopwatch" class="feature hidden">
-            <div class="feature-header">
-                <span class="feature-icon">⏱️</span>
-                <h2>Stopwatch</h2>
-            </div>
-            <p id="stopwatch-time">00:00:00</p>
-            <div>
-                <button id="start-stopwatch">Start</button>
-                <button id="stop-stopwatch">Stop</button>
-                <button id="reset-stopwatch">Reset</button>
-            </div>
-            <p class="instructions">Rotate to landscape right to use the stopwatch.</p>
-        </section>
+    <!-- Stopwatch (Landscape Right-Side Up) -->
+    <section id="stopwatch" class="feature hidden">
+      <div class="feature-header">
+        <span class="feature-icon">⏱️</span>
+        <h2>Stopwatch</h2>
+      </div>
+      <p id="stopwatch-time" class="big-text mono">00:00:00</p>
+      <div class="row">
+        <button id="start-stopwatch">Start</button>
+        <button id="stop-stopwatch">Stop</button>
+        <button id="reset-stopwatch">Reset</button>
+      </div>
+      <p class="hint">Rotate to landscape (buttons on the right) for Stopwatch.</p>
+    </section>
 
-        <!-- Timer -->
-        <section id="timer" class="feature hidden">
-            <div class="feature-header">
-                <span class="feature-icon">⏳</span>
-                <h2>Timer</h2>
-            </div>
-            <input type="number" id="timer-input" placeholder="Seconds">
-            <button id="start-timer">Start</button>
-            <p id="timer-display">0</p>
-            <p class="instructions">Rotate to portrait upside-down to start a timer.</p>
-        </section>
+    <!-- Timer (Portrait Upside Down) -->
+    <section id="timer" class="feature hidden">
+      <div class="feature-header">
+        <span class="feature-icon">⏳</span>
+        <h2>Timer</h2>
+      </div>
+      <div class="row">
+        <input type="number" id="timer-input" placeholder="Seconds" />
+        <button id="start-timer">Start</button>
+      </div>
+      <div class="timer-visual">
+        <svg id="timer-circle" width="160" height="160" viewBox="0 0 160 160" aria-hidden="true">
+          <circle cx="80" cy="80" r="70" class="track" />
+          <circle cx="80" cy="80" r="70" class="progress" />
+        </svg>
+        <p id="timer-display" class="big-text mono">0</p>
+      </div>
+      <p class="hint">Flip the phone upside‑down (portrait) to show Timer.</p>
+    </section>
 
-        <!-- Weather -->
-        <section id="weather" class="feature hidden">
-            <div class="feature-header">
-                <span class="feature-icon">🌤️</span>
-                <h2>Weather</h2>
-            </div>
-            <p id="weather-info">Loading...</p>
-            <p class="instructions">Rotate to landscape left to see the weather.</p>
-        </section>
-    </main>
+    <!-- Weather (Landscape Left-Side Up) -->
+    <section id="weather" class="feature hidden">
+      <div class="feature-header">
+        <span class="feature-icon">🌤️</span>
+        <h2>Weather</h2>
+      </div>
+      <div id="weather-data">
+        <img id="weather-icon" alt="Weather icon" />
+        <p id="weather-info">Loading...</p>
+      </div>
+      <p class="hint">Rotate to landscape (buttons on the left) for Weather.</p>
+    </section>
+  </main>
 
-    <footer>
-        <p>Rotate your device to switch modes</p>
-    </footer>
+  <footer class="app-footer">
+    <button id="enable-motion" class="hidden">Enable Motion</button>
+    <span id="debug" class="debug"></span>
+  </footer>
 
-    <script src="script.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
